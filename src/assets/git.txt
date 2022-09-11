@@ -1,0 +1,28 @@
+1. 本地提交代码
+   - git add .
+   - git commit -m ''
+      - feat: 新增特性
+      - fixed: 修改bug
+      - style: 改样式
+      - commet: 改注释
+
+2. 远程仓库
+- 第一次
+   -  git remote add 远程仓库的小名 远程仓库的地址..  建立本地仓库和远程仓库的链接
+   -  git remote -v 查看远程仓库
+   -  git push -u  仓库的小名  本地分支名:远程分支名  // -u是第一次推送的时候添加 , 如果说本地分支名和远程分支名一样, 可以省略
+ 
+
+
+- 之后
+ - git add .
+ - git commit -m
+ - git push
+ - git log 查看commit日志
+
+
+
+3. 新建分支
+- 分支命名规范:   feature/分支名
+- 新建并切换分支: git checkout -b 分支名
+ - 推送新分支  git push -u 远程仓库的小名 分支名
