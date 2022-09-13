@@ -33,6 +33,7 @@
   </div>
 </template>
 <script>
+import dayjs from '@/utils/dayjs'
 export default {
   props: {
     article: {
@@ -42,7 +43,9 @@ export default {
   },
   computed: {
     label() {
-      return `${this.article.aut_name} ${this.article.comm_count}评论 ${this.article.pubdate}`
+      return `${this.article.aut_name} ${this.article.comm_count}评论 ${dayjs(
+        this.article.pubdate
+      ).fromNow()}`
     }
   }
 }

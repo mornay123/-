@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        //  ------模拟Promise执行-----
+        //  1.executor执行器函数
+        //  2.promise有三种状态：1.pending 准备态 2.fulfilled 完成态 3.rejected 拒绝态
+        //  3.value：记录成功的原因 reason：失败的原因
+        //  4.polyfill 垫片，为低版本浏览器不支持promise准备的兼容版promise
+        //  5.promise的状态只能改变一次，从pending变成fulfilled，或者从pending变成rejected，不能让fulfilled和rejected相互转换
+        //  6.当promise在执行过程中，任何错误都会导致promise变成拒绝态
+        //  7.promise 必须有then方法，onFulfilled 成功的回调, onRejected 失败的回调
+        const PENDING = 'pending'
+        const FULFILLED = 'fulfilled'
+        const REJECTED = 'rejected'
+        class Promise {
+            value
+            reason
+            status = PENDING
+            // onFulfilled
+            // onRejected
+            onFulfilledCallBacks = []
+            onRejectedCallBacks = []
+            constructor(executor) {
+                const resolve = (value) => {
+                    if (this.status === PENDING) {
+                        this.value = value
+                        this.status = FULFILLED
+                        // this.onFulfilled(this.value)
+                        this.onFulfilledCallBacks.forEach(cb => cb())
+
+                    }
+                }
+                const reject = (reason) => {
+                    if (this.status === PENDING) {
+                        this.reason = reason
+                        this.status = REJECTED
+                        // this.onRejected(this.reason)
+                        this.onRejectedCallBacks.forEach(cb => cb())
+                    }
+                }
+                try {
+                    executor(resolve, reject)
+                } catch (error) {
+                    reject(error)
+                }
+            }
+            then(onFulfilled, onRejected) {
+                if (this.status === FULFILLED) {
+                    onFulfilled(this.value)
+                }
+                if (this.status === REJECTED) {
+                    onRejected(this.reason)
+                }
+                if (this.status === PENDING) {
+                    // 异步 状态没变
+                    // this.onFulfilled = onFulfilled
+                    // this.onRejected = onRejected
+                    this.onFulfilledCallBacks.push(() => {
+                        onFulfilled(this.value)
+                    })
+                    this.onRejectedCallBacks.push(() => {
+                        onRejected(this.reason)
+                    })
+                }
+            }
+        }
+
+        // executor
+        // console.log(new Promise((resolve, reject) => {
+        //     resolve('成功')
+        //     reject('失败')
+        // }));
+
+        // 三种状态
+        // const p1 = new Promise(() => { }) //Pending
+        // const p2 = new Promise((resolve) => resolve()) // fulfilled
+        // const p3 = new Promise((resolve, reject) => reject()) // rejected
+
+
+        // try……catch
+        // console.log(
+        //     'p1', p1,
+        //     'p2', p2,
+        //     'p3', p3
+        // )
+        // const p = new Promise((resolve, reject) => {
+        //     throw new Error()
+        // })
+        // console.log(p);
+
+
+        // 测试then
+        const p = new Promise((resolve, reject) => {
+            // reject('失败')
+            setTimeout(() => {
+                resolve('成功') // 异步情况
+            }, 3000)
+        })
+
+        p.then(
+            (res) => console.log('第一次then', res),
+        )
+
+        p.then(
+            (res) => console.log('第二次then', res),
+        )
+    </script>
+</body>
+
+</html>
