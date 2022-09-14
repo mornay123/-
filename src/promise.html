@@ -21,7 +21,7 @@
         const PENDING = 'pending'
         const FULFILLED = 'fulfilled'
         const REJECTED = 'rejected'
-        class Promise {
+        class myPromise {
             value
             reason
             status = PENDING
@@ -53,24 +53,57 @@
                     reject(error)
                 }
             }
+
             then(onFulfilled, onRejected) {
-                if (this.status === FULFILLED) {
-                    onFulfilled(this.value)
-                }
-                if (this.status === REJECTED) {
-                    onRejected(this.reason)
-                }
-                if (this.status === PENDING) {
-                    // 异步 状态没变
-                    // this.onFulfilled = onFulfilled
-                    // this.onRejected = onRejected
-                    this.onFulfilledCallBacks.push(() => {
-                        onFulfilled(this.value)
-                    })
-                    this.onRejectedCallBacks.push(() => {
-                        onRejected(this.reason)
-                    })
-                }
+                const pp = new Promise((resolve, reject) => {
+                    if (this.status === FULFILLED) {
+                        queueMicrotask(() => {
+                            try {
+                                const x = onFulfilled(this.value)
+                                resolve(x)
+                            } catch (error) {
+                                reject(error)
+                            }
+                        })
+                    }
+                    if (this.status === REJECTED) {
+                        queueMicrotask(() => {
+                            try {
+                                const x = onRejected(this.reason)
+                                resolve(x)
+                            } catch (error) {
+                                reject(error)
+                            }
+                        })
+                    }
+                    if (this.status === PENDING) {
+                        // 异步 状态没变
+                        // this.onFulfilled = onFulfilled
+                        // this.onRejected = onRejected
+                        this.onFulfilledCallBacks.push(() => {
+                            queueMicrotask(() => {
+                                try {
+                                    const x = onFulfilled(this.value)
+                                    resolve(x)
+                                } catch (error) {
+                                    reject(error)
+                                }
+                            })
+
+                        })
+                        this.onRejectedCallBacks.push(() => {
+                            queueMicrotask(() => {
+                                try {
+                                    const x = onRejected(this.reason)
+                                    resolve(x)  // 在下一个then里打印上一次的成功或者失败的结果 
+                                } catch (error) {
+                                    reject(error)
+                                }
+                            })
+                        })
+                    }
+                })
+                return pp
             }
         }
 
@@ -99,20 +132,26 @@
 
 
         // 测试then
-        const p = new Promise((resolve, reject) => {
+        const p = new myPromise((resolve, reject) => {
             // reject('失败')
             setTimeout(() => {
                 resolve('成功') // 异步情况
-            }, 3000)
+            }, 1000)
         })
-
-        p.then(
-            (res) => console.log('第一次then', res),
+        // 异步回调抓取错误 try……catch 和 queueMicrotask---队列：使成为微任务
+        const p1 = p.then(
+            () => {
+                return '成功1'
+            },
+            () => {
+                return '失败1'
+            }
         )
-
-        p.then(
+        p1.then(
             (res) => console.log('第二次then', res),
+            (error) => console.log(error)
         )
+
     </script>
 </body>
 

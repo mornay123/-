@@ -6,13 +6,14 @@ export default new Vuex.Store({
   plugins: [
     createPresistedState({
       key: 'HEIMA_TOUTIAO',
-      reducer({ tokenObj }) {
-        return { tokenObj }
+      reducer({ tokenObj, myChannels }) {
+        return { tokenObj, myChannels }
       }
     })
   ],
   state: {
-    tokenObj: {}
+    tokenObj: {},
+    myChannels: []
   },
   getters: {
     isLogin(state) {
@@ -22,6 +23,13 @@ export default new Vuex.Store({
   mutations: {
     SET_TOKEN(state, token) {
       state.tokenObj = token
+    },
+    /**
+     * 未登录状态删除和添加频道的渲染
+     * @param {*} channels 添加或删除后最新的channels
+     */
+    SET_MY_CHANNELS(state, channels) {
+      state.myChannels = channels
     }
   }
 })
