@@ -3,7 +3,14 @@
     <!-- 搜索框 -->
     <van-nav-bar class="navbar">
       <template #title>
-        <van-button icon="search" block round size="small">搜索</van-button>
+        <van-button
+          icon="search"
+          block
+          round
+          size="small"
+          @click="$router.push('/search')"
+          >搜索</van-button
+        >
       </template>
     </van-nav-bar>
     <!-- 导航 -->
@@ -34,7 +41,7 @@
 <script>
 import { getChannelAPI, delChannelAPI, addChannelAPI } from '@/api'
 import ChannelEdit from '@/views/Home/components/ChannelEdit.vue'
-import ArticleList from '@/components/ArticleList.vue'
+import ArticleList from '@/views/Home/components/ArticleList.vue'
 import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'home',

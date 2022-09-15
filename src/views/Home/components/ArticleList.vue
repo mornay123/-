@@ -22,7 +22,7 @@
 </template>
 <script>
 import { getArticles } from '@/api'
-import ArticleItem from '@/components/ArticleItem.vue'
+import ArticleItem from '@/views/Home/components/ArticleItem.vue'
 export default {
   name: 'ArticleList',
   components: {
