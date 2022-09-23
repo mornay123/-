@@ -60,7 +60,7 @@
                         queueMicrotask(() => {
                             try {
                                 const x = onFulfilled(this.value)
-                                resolve(x)
+                                resolvePromise(x, p2, resolve, reject)
                             } catch (error) {
                                 reject(error)
                             }
@@ -70,7 +70,7 @@
                         queueMicrotask(() => {
                             try {
                                 const x = onRejected(this.reason)
-                                resolve(x)
+                                resolvePromise(x, p2, resolve, reject)
                             } catch (error) {
                                 reject(error)
                             }
@@ -84,7 +84,7 @@
                             queueMicrotask(() => {
                                 try {
                                     const x = onFulfilled(this.value)
-                                    resolve(x)
+                                    resolvePromise(x, p2, resolve, reject)
                                 } catch (error) {
                                     reject(error)
                                 }
@@ -95,7 +95,8 @@
                             queueMicrotask(() => {
                                 try {
                                     const x = onRejected(this.reason)
-                                    resolve(x)  // 在下一个then里打印上一次的成功或者失败的结果 
+                                    resolvePromise(x, p2, resolve, reject)
+                                    // resolve(x)  // 在下一个then里打印上一次的成功或者失败的结果 
                                 } catch (error) {
                                     reject(error)
                                 }
@@ -129,28 +130,40 @@
         //     throw new Error()
         // })
         // console.log(p);
-
+        function resolvePromise(x, p2, resolve, reject) {
+            if (x === p2) {
+                throw new TypeError('错误')
+            }
+            if (typeof x === 'object' && x !== null || typeof x === 'function') {
+                try {
+                    let then = x.then
+                } catch (error) {
+                    reject(error)
+                }
+            } else {
+                resolve(x)
+            }
+        }
 
         // 测试then
         const p = new myPromise((resolve, reject) => {
-            // reject('失败')
-            setTimeout(() => {
-                resolve('成功') // 异步情况
-            }, 1000)
+            // // reject('失败')
+            // setTimeout(() => {
+            //     resolve('成功') // 异步情况
+            // }, 1000)
+            resolve()
         })
-        // 异步回调抓取错误 try……catch 和 queueMicrotask---队列：使成为微任务
-        const p1 = p.then(
+        // 异步回调抓取错误 try……catch 、、 queueMicrotask---队列：使成为微任务
+        const p2 = p.then(
             () => {
-                return '成功1'
-            },
-            () => {
-                return '失败1'
+                return p2
             }
         )
-        p1.then(
-            (res) => console.log('第二次then', res),
-            (error) => console.log(error)
-        )
+        // p1.then(
+        //     (res) => console.log('第二次then', res),
+        //     (error) => console.log(error)
+        // )
+        p2.then(() => { }, (err) => { console.log(err); })
 
     </script>
 </body>

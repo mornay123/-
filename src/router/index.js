@@ -34,6 +34,15 @@ const routes = [
   {
     path: '/search',
     component: () => import(/* webpackChunkName:'search' */ '@/views/search')
+  },
+  {
+    path: '/user',
+    component: () => import(/* webpackChunkName:'user' */ '@/views/user')
+  },
+  {
+    path: '/articles/:articleId',
+    component: () => import('@/views/Detail'),
+    props: true // 开启路由传参
   }
 ]
 

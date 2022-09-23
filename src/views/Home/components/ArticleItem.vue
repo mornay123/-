@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click="$router.push(`/articles/${article.art_id}`)">
     <!-- 没有图片 -->
     <van-cell
       :title="article.title"

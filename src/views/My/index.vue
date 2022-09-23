@@ -35,6 +35,7 @@
                 round
                 class="edit-btn"
                 style="height: 22px"
+                @click="$router.push('/user')"
                 >编辑按钮</van-button
               >
             </van-row>
